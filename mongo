@@ -1,0 +1,23 @@
+var express =require('express');
+var app=express();
+var path=require('path');
+var assert=require('assert');
+var MongoClient=require('mongodb').MongoClient;
+var config=require('./config/config.js');
+var db
+MondoClient.connect(config.connect.dbConnectString,(err,database)=>{
+if(err) throw err;
+  db=database;
+  app.listen(config.connect.port,()=>{
+    console.log('Listening to port #'+config.connect.port);
+  })
+})
+app.set('views',path.join(__dirname,'views/'));
+app.set('view engine','ejs');
+app.get('/',function(req,res){
+  var cursor=db.collection('movoies').find({});
+  cursor.toArray(function(err,i){
+    if(err) throw err;
+    res.render('index.ejs',{movies:i});
+})
+})
